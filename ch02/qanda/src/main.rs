@@ -17,6 +17,12 @@ impl Question {
         }
     }
 }
+
+impl std::fmt::Display for Question {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+        write!(f, "{}, title: {}, content: {}, tags: {:?}", self.id, self.title, self.content, self.tags)
+    }
+}
  
 fn main() {
     let question = Question::new(
