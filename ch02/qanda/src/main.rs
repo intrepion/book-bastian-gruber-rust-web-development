@@ -23,6 +23,18 @@ impl std::fmt::Display for Question {
         write!(f, "{}, title: {}, content: {}, tags: {:?}", self.id, self.title, self.content, self.tags)
     }
 }
+
+impl std::fmt::Display for QuestionId {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+        write!(f, "id: {}", self.0)
+    }
+}
+ 
+impl std::fmt::Debug for Question {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        write!(f, "{:?}", self.tags)
+    }
+}
  
 fn main() {
     let question = Question::new(
