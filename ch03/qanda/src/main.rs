@@ -1,7 +1,7 @@
 use serde::Serialize;
 use std::io::{Error, ErrorKind};
 use std::str::FromStr;
-use warp::{Filter, reject::Reject};
+use warp::{Filter, reject::Reject, Rejection, Reply, http::StatusCode};
 
 #[derive(Debug, Serialize)]
 struct Question {
@@ -57,6 +57,20 @@ async fn get_questions() -> Result<impl warp::Reply, warp::Rejection> {
                 &question
             ))
         }
+    }
+}
+
+async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
+    if let Some(_InvalidId) = r.find() {
+        Ok(warp::reply::with_status(
+            "No valid ID presented",
+            StatusCode::UNPROCESSABLE_ENTITY,
+        ))
+    } else {
+        Ok(warp::reply::with_status(
+            "Route not found",
+            StatusCode::NOT_FOUND,
+        ))
     }
 }
 
