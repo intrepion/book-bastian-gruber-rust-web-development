@@ -1,7 +1,7 @@
 use serde::Serialize;
 use std::io::{Error, ErrorKind};
 use std::str::FromStr;
-use warp::Filter;
+use warp::{Filter, reject::Reject};
 
 #[derive(Debug, Serialize)]
 struct Question {
@@ -35,20 +35,31 @@ impl FromStr for QuestionId {
         }
     }
 }
- 
+
+#[derive(Debug)]
+struct InvalidId;
+impl Reject for InvalidId {}
+
 async fn get_questions() -> Result<impl warp::Reply, warp::Rejection> {
     let question = Question::new(
         QuestionId::from_str("1").expect("No id provided"),
         "First Question".to_string(),
         "Content of question".to_string(),
         Some(vec!("faq".to_string())),
-    );        
- 
-    Ok(warp::reply::json(
-      &question
-    ))
+    );
+
+    match question.id.0.parse::<i32>() {
+        Err(_) =>  {
+            Err(warp::reject::custom(InvalidId))
+        },
+        Ok(_) => {
+            Ok(warp::reply::json(
+                &question
+            ))
+        }
+    }
 }
- 
+
 #[tokio::main]
 async fn main() {
     let question = Question::new(
