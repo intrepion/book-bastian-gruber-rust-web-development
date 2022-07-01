@@ -1,6 +1,5 @@
-use std::str::FromStr;
 use std::io::{Error, ErrorKind};
- 
+use std::str::FromStr;
 use warp::Filter;
 
 #[derive(Debug)]
@@ -36,6 +35,19 @@ impl FromStr for QuestionId {
     }
 }
  
+async fn get_questions() -> Result<impl warp::Reply, warp::Rejection> {
+    let question = Question::new(
+        QuestionId::from_str("1").expect("No id provided"),
+        "First Question".to_string(),
+        "Content of question".to_string(),
+        Some(vec!("faq".to_string())),
+    );        
+ 
+    Ok(warp::reply::json(
+      &question
+    ))
+}
+ 
 #[tokio::main]
 async fn main() {
     let question = Question::new(
@@ -46,10 +58,14 @@ async fn main() {
     );
     println!("{:?}", question);
  
-    let hello = warp::get()
-        .map(|| format!("Hello, World!"));
+    let get_items = warp::get()
+        .and(warp::path("questions"))
+        .and(warp::path::end())
+        .and_then(get_questions);
  
-    warp::serve(hello)
+    let routes = get_items;
+ 
+    warp::serve(routes)
         .run(([127, 0, 0, 1], 3030))
         .await;
 }
