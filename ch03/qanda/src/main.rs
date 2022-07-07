@@ -6,10 +6,13 @@ use std::{
 use warp::{
     Filter, 
     http::Method, 
+    filters::{
+        cors::CorsForbidden,
+    },
     reject::Reject, 
     Rejection, 
     Reply, 
-    http::StatusCode,
+    http::StatusCode
 };
 
 #[derive(Debug, Serialize)]
@@ -70,15 +73,19 @@ async fn get_questions() -> Result<impl warp::Reply, warp::Rejection> {
 }
 
 async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
-    println!("{:?}", r);
-    if let Some(InvalidId) = r.find() {
+    if let Some(error) = r.find::<CorsForbidden>() {
         Ok(warp::reply::with_status(
-            "No valid ID presented",
+            error.to_string(),
+            StatusCode::FORBIDDEN,
+        ))
+    } else if let Some(InvalidId) = r.find() {
+        Ok(warp::reply::with_status(
+            "No valid ID presented".to_string(),
             StatusCode::UNPROCESSABLE_ENTITY,
         ))
-    } else {
+    }  else {
         Ok(warp::reply::with_status(
-            "Route not found",
+            "Route not found".to_string(),
             StatusCode::NOT_FOUND,
         ))
     }
