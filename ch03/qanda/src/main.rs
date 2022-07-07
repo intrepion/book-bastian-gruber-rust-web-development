@@ -70,7 +70,8 @@ async fn get_questions() -> Result<impl warp::Reply, warp::Rejection> {
 }
 
 async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
-    if let Some(_InvalidId) = r.find() {
+    println!("{:?}", r);
+    if let Some(InvalidId) = r.find() {
         Ok(warp::reply::with_status(
             "No valid ID presented",
             StatusCode::UNPROCESSABLE_ENTITY,
@@ -87,7 +88,7 @@ async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
 async fn main() {
     let cors = warp::cors()
         .allow_any_origin()
-        .allow_header("content-type")
+        .allow_header("not-in-the-request")
         .allow_methods(&[Method::PUT, Method::DELETE, Method::GET, Method::POST]);
 
     let get_items = warp::get()
