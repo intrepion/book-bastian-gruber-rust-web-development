@@ -74,27 +74,9 @@ impl FromStr for QuestionId {
     }
 }
 
-async fn get_questions(store: Store) -> Result<impl Reply, Rejection> {
-    let question = Question::new(
-        QuestionId::from_str("1").expect("No id provided"),
-        "First Question".to_string(),
-        "Content of question".to_string(),
-        Some(vec!("faq".to_string())),
-    );
-
-    match question.id.0.parse::<i32>() {
-        Err(_) =>  {
-            Err(warp::reject::custom(InvalidId))
-        },
-        Ok(_) => {
-            Ok(warp::reply::json(
-                &question
-            ))
-        }
-    }
-
+async fn get_questions(params: HashMap<String, String>, store: Store) -> Result<impl warp::Reply, warp::Rejection> {
     let res: Vec<Question> = store.questions.values().cloned().collect();
-
+ 
     Ok(warp::reply::json(&res))
 }
 
