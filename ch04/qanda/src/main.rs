@@ -14,6 +14,10 @@ use warp::{
     http::StatusCode,
 };
 
+#[derive(Debug)]
+struct InvalidId;
+impl Reject for InvalidId {}
+
 #[derive(Clone)]
 struct Store {
     questions: HashMap<QuestionId, Question>,
@@ -37,7 +41,7 @@ impl Store {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Clone, Debug)]
 struct Question {
     id: QuestionId,
     title: String,
@@ -70,11 +74,7 @@ impl FromStr for QuestionId {
     }
 }
 
-#[derive(Debug)]
-struct InvalidId;
-impl Reject for InvalidId {}
-
-async fn get_questions() -> Result<impl Reply, Rejection> {
+async fn get_questions(store: Store) -> Result<impl Reply, Rejection> {
     let question = Question::new(
         QuestionId::from_str("1").expect("No id provided"),
         "First Question".to_string(),
@@ -92,6 +92,10 @@ async fn get_questions() -> Result<impl Reply, Rejection> {
             ))
         }
     }
+
+    let res: Vec<Question> = store.questions.values().cloned().collect();
+
+    Ok(warp::reply::json(&res))
 }
 
 async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
