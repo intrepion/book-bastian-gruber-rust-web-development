@@ -14,6 +14,7 @@ use warp::{
     http::StatusCode,
 };
 
+#[derive(Clone)]
 struct Store {
     questions: HashMap<QuestionId, Question>,
 }
@@ -36,7 +37,7 @@ impl Store {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 struct Question {
     id: QuestionId,
     title: String,
@@ -115,6 +116,7 @@ async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
 #[tokio::main]
 async fn main() {
     let store = Store::new();
+    let store_filter = warp::any().map(move || store.clone());
 
     let cors = warp::cors()
         .allow_any_origin()
