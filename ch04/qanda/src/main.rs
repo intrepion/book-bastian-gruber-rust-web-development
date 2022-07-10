@@ -123,13 +123,14 @@ async fn main() {
         .allow_header("not-in-the-request")
         .allow_methods(&[Method::PUT, Method::DELETE, Method::GET, Method::POST]);
 
-    let get_items = warp::get()
+    let get_questions = warp::get()
         .and(warp::path("questions"))
         .and(warp::path::end())
+        .and(store_filter)
         .and_then(get_questions)
         .recover(return_error);
 
-    let routes = get_items.with(cors);
+    let routes = get_questions.with(cors);
 
     warp::serve(routes)
         .run(([127, 0, 0, 1], 3030))
