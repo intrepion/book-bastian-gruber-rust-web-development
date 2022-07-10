@@ -1,19 +1,22 @@
 use serde::Serialize;
 use std::{
+    collections::HashMap,
     io::{Error, ErrorKind},
     str::FromStr,
 };
 use warp::{
     Filter, 
     http::Method, 
-    filters::{
-        cors::CorsForbidden,
-    },
+    filters::cors::CorsForbidden,
     reject::Reject, 
     Rejection, 
     Reply, 
-    http::StatusCode
+    http::StatusCode,
 };
+
+struct Store {
+    questions: HashMap<QuestionId, Question>,
+}
 
 #[derive(Debug, Serialize)]
 struct Question {
