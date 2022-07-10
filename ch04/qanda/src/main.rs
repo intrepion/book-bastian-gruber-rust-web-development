@@ -75,6 +75,11 @@ impl FromStr for QuestionId {
 }
 
 async fn get_questions(params: HashMap<String, String>, store: Store) -> Result<impl warp::Reply, warp::Rejection> {
+    match params.get("start") {
+        Some(start) => println!("{}", start),
+        None => println!("No start value"),
+    }
+
     println!("{:?}", params);
     let res: Vec<Question> = store.questions.values().cloned().collect();
  
