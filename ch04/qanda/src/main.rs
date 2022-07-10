@@ -19,6 +19,11 @@ struct Store {
 }
 
 impl Store {
+    fn add_question(mut self, question: Question) -> Self {
+        self.questions.insert(question.id.clone(), question);
+        self        
+    }
+
     fn new() -> Self {
         Store {
             questions: HashMap::new(),
