@@ -24,6 +24,16 @@ impl Store {
         self
     }
 
+    fn init(self) -> Self {
+        let question = Question::new(
+            QuestionId::from_str("1").expect("Id not set"), 
+            "How?".to_string(), 
+            "Please help!".to_string(), 
+            Some(vec!["general".to_string()])
+        );
+        self.add_question(question)
+    }
+
     fn new() -> Self {
         Store {
             questions: HashMap::new(),
