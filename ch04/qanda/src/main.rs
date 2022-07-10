@@ -75,6 +75,10 @@ impl FromStr for QuestionId {
 }
 
 async fn get_questions(params: HashMap<String, String>, store: Store) -> Result<impl warp::Reply, warp::Rejection> {
+    if let Some(n) = params.get("start") {
+        println!("{}", n);
+    }
+
     match params.get("start") {
         Some(start) => println!("{}", start),
         None => println!("No start value"),
