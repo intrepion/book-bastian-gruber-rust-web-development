@@ -18,6 +18,14 @@ struct Store {
     questions: HashMap<QuestionId, Question>,
 }
 
+impl Store {
+    fn new() -> Self {
+        Store {
+            questions: HashMap::new(),
+        }
+    }
+}
+
 #[derive(Debug, Serialize)]
 struct Question {
     id: QuestionId,
