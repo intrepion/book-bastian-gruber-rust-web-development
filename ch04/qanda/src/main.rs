@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
     io::{Error, ErrorKind},
@@ -24,24 +24,19 @@ impl Store {
         self
     }
 
-    fn init(self) -> Self {
-        let question = Question::new(
-            QuestionId::from_str("1").expect("Id not set"), 
-            "How?".to_string(), 
-            "Please help!".to_string(), 
-            Some(vec!["general".to_string()])
-        );
-        self.add_question(question)
+    fn init() -> HashMap<QuestionId, Question> {
+        let file = include_str!("../questions.json");
+        serde_json::from_str(file).expect("can't read questions.json")
     }
 
     fn new() -> Self {
         Store {
-            questions: HashMap::new(),
+            questions: Self::init(),
         }
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 struct Question {
     id: QuestionId,
     title: String,
@@ -49,7 +44,7 @@ struct Question {
     tags: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq, Hash)]
 struct QuestionId(String);
  
 impl Question {
@@ -119,6 +114,8 @@ async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
 
 #[tokio::main]
 async fn main() {
+    let store = Store::new();
+
     let cors = warp::cors()
         .allow_any_origin()
         .allow_header("not-in-the-request")
