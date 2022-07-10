@@ -39,7 +39,7 @@ struct Question {
     tags: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Debug, Clone, Eq, Hash)]
+#[derive(Serialize, Debug, Clone, PartialEq, Eq, Hash)]
 struct QuestionId(String);
  
 impl Question {
