@@ -21,7 +21,7 @@ struct Store {
 impl Store {
     fn add_question(mut self, question: Question) -> Self {
         self.questions.insert(question.id.clone(), question);
-        self        
+        self
     }
 
     fn new() -> Self {
@@ -38,8 +38,8 @@ struct Question {
     content: String,
     tags: Option<Vec<String>>,
 }
- 
-#[derive(Debug, Serialize)]
+
+#[derive(Serialize, Debug, Clone, Eq, Hash)]
 struct QuestionId(String);
  
 impl Question {
