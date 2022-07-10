@@ -130,9 +130,9 @@ async fn main() {
     let get_questions = warp::get()
         .and(warp::path("questions"))
         .and(warp::path::end())
+        .and(warp::query())
         .and(store_filter)
-        .and_then(get_questions)
-        .recover(return_error);
+        .and_then(get_questions);
 
     let routes = get_questions.with(cors);
 
