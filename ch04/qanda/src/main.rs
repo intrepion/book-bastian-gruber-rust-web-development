@@ -74,7 +74,15 @@ impl FromStr for QuestionId {
     }
 }
 
-async fn get_questions(params: HashMap<String, String>, store: Store) -> Result<impl warp::Reply, warp::Rejection> {
+async fn get_questions(params: HashMap<String, String>, store: Store) -> Result<impl warp::Reply, warp::Rejection> { 
+    let mut start = 0;
+ 
+    if let Some(n) = params.get("start") {
+       start =  n.parse::<usize>().expect("Could not parse start");
+    }
+ 
+    println!("{}", start);
+
     if let Some(n) = params.get("start") {
         println!("{:?}", n.parse::<usize>());
     }
