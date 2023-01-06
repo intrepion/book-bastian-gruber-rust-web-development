@@ -7,5 +7,5 @@ edition = "2021"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-tokio = { version = "1.2", features = ["full"] }
+tokio = { version = "1.20", features = ["full"] }
 warp = "0.3"
